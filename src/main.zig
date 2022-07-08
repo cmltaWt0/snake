@@ -9,6 +9,7 @@ const Point = @import("snake.zig").Point;
 const fmt = std.fmt;
 
 var snake: Snake = Snake.init();
+var life: board.Life = board.Life.init();  // TODO: encapsulate into board
 var fruit: Point = undefined;
 var frame_count: u32 = 0;
 var prev_state: u8 = 0;
@@ -56,6 +57,7 @@ fn proceed_input() void {
         board.score = 0;
         frame_count = 0;
         snake = Snake.init();
+        life.lifes_cnt = 3;
     }
 
     prev_state = gamepad;
@@ -75,13 +77,14 @@ export fn update() void {
         snake.update();
 
         if (snake.idDead()) {
-            game_over = true;
+            life.lifes_cnt -= 1;
+            if (life.lifes_cnt == 0) game_over = true;
         }
 
         if (snake.body.get(0).equals(fruit)) {
             const tail = snake.body.get(snake.body.len - 1);
             snake.body.append(Point.init(tail.x, tail.y)) catch @panic("can't grow the snake");
-            w4.tone(20 | (60 << 16), 80, 10, w4.TONE_PULSE2 | w4.TONE_MODE3);
+            w4.tone(20 | (60 << 16), 80, 20, w4.TONE_PULSE2 | w4.TONE_MODE3);
             board.score += 1;
             fruit.x = utils.rnd(20);
             fruit.y = utils.rnd(20);
@@ -91,4 +94,5 @@ export fn update() void {
     snake.draw();
     board.draw_score();
     board.place_fruit(fruit);
+    life.draw();
 }
