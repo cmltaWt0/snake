@@ -26,6 +26,17 @@ pub const Point = struct {
     pub fn equals(this: @This(), other: @This()) bool {
         return this.x == other.x and this.y == other.y;
     }
+
+    pub fn is_inside(this: @This(), snake: Snake) bool {
+        var inside: bool = false;
+        for (snake.body.constSlice()) |item| {
+            if (this.equals(item)) {
+                inside = true;
+                break;
+            }
+        }
+        return inside;
+    }
 };
 
 pub const Snake = struct {

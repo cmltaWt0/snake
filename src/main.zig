@@ -16,6 +16,7 @@ var prev_state: u8 = 0;
 var prng: std.rand.DefaultPrng = undefined;
 var random: std.rand.Random = undefined;
 var game_over: bool = false;
+var lock_input: bool = false;
 
 
 export fn start() void {
@@ -36,20 +37,26 @@ fn proceed_input() void {
     const gamepad = w4.GAMEPAD1.*;
     const just_pressed = gamepad & (gamepad ^ prev_state);
 
-    if (just_pressed & w4.BUTTON_UP != 0) {
-        snake.up();
-    }
+    if (lock_input == false) {
+        if (just_pressed & w4.BUTTON_UP != 0) {
+            snake.up();
+            lock_input = true;
+        }
 
-    if (just_pressed & w4.BUTTON_DOWN != 0) {
-        snake.down();
-    }
+        if (just_pressed & w4.BUTTON_DOWN != 0) {
+            snake.down();
+            lock_input = true;
+        }
 
-    if (just_pressed & w4.BUTTON_LEFT != 0) {
-        snake.left();
-    }
+        if (just_pressed & w4.BUTTON_LEFT != 0) {
+            snake.left();
+            lock_input = true;
+        }
 
-    if (just_pressed & w4.BUTTON_RIGHT != 0) {
-        snake.right();
+        if (just_pressed & w4.BUTTON_RIGHT != 0) {
+            snake.right();
+            lock_input = true;
+        }
     }
 
     if (just_pressed & w4.BUTTON_1 != 0) {
@@ -75,6 +82,7 @@ export fn update() void {
 
     if (frame_count % 15 == 0 and game_over == false) {
         snake.update();
+        lock_input = false;
 
         if (snake.idDead()) {
             life.lifes_cnt -= 1;
@@ -86,8 +94,14 @@ export fn update() void {
             snake.body.append(Point.init(tail.x, tail.y)) catch @panic("can't grow the snake");
             w4.tone(20 | (60 << 16), 80, 20, w4.TONE_PULSE2 | w4.TONE_MODE3);
             board.score += 1;
+
             fruit.x = utils.rnd(20);
             fruit.y = utils.rnd(20);
+
+            while (fruit.is_inside(snake)) {
+                fruit.x = utils.rnd(20);
+                fruit.y = utils.rnd(20);
+            }
         }
     }
 
