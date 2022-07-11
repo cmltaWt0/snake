@@ -29,7 +29,7 @@ export fn start() void {
     };
 
     utils.init_random();
-    fruit = Point.init(utils.rnd(20), utils.rnd(20));
+    fruit = Point.init(utils.rnd(0, 20), utils.rnd(1, 20));
     board.score = 0;
 }
 
@@ -95,12 +95,12 @@ export fn update() void {
             w4.tone(20 | (60 << 16), 80, 20, w4.TONE_PULSE2 | w4.TONE_MODE3);
             board.score += 1;
 
-            fruit.x = utils.rnd(20);
-            fruit.y = utils.rnd(20);
+            fruit.x = utils.rnd(0, 20);
+            fruit.y = utils.rnd(1, 20);
 
             while (fruit.is_inside(snake)) {
-                fruit.x = utils.rnd(20);
-                fruit.y = utils.rnd(20);
+                fruit.x = utils.rnd(0, 20);
+                fruit.y = utils.rnd(1, 20);
             }
         }
     }
