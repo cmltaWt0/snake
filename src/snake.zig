@@ -92,11 +92,23 @@ pub const Snake = struct {
         }
     }
 
+    pub fn is_up(this: @This()) bool {
+        var __is_up: bool = false;
+        if (this.direction.y == -1) __is_up = true;
+        return __is_up;
+    }
+
     pub fn down(this: *@This()) void {
         if (this.direction.y == 0) {
             this.direction.x = 0;
             this.direction.y = 1;
         }
+    }
+
+    pub fn is_down(this: @This()) bool {
+        var __is_down: bool = false;
+        if (this.direction.y == 1) __is_down = true;
+        return __is_down;
     }
 
     pub fn left(this: *@This()) void {
@@ -106,11 +118,23 @@ pub const Snake = struct {
         }
     }
 
+    pub fn is_left(this: @This()) bool {
+        var __is_left: bool = false;
+        if (this.direction.x == -1) __is_left = true;
+        return __is_left;
+    }
+
     pub fn right(this: *@This()) void {
         if (this.direction.x == 0) {
             this.direction.y = 0;
             this.direction.x = 1;
         }
+    }
+
+    pub fn is_right(this: @This()) bool {
+        var __is_right: bool = false;
+        if (this.direction.x == 1) __is_right = true;
+        return __is_right;
     }
 
     pub fn idDead(this: @This()) bool {

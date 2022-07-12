@@ -17,6 +17,7 @@ var prng: std.rand.DefaultPrng = undefined;
 var random: std.rand.Random = undefined;
 var game_over: bool = false;
 var lock_input: bool = false;
+var snake_speed: u32 = 15;
 
 
 export fn start() void {
@@ -39,23 +40,39 @@ fn proceed_input() void {
 
     if (lock_input == false) {
         if (just_pressed & w4.BUTTON_UP != 0) {
-            snake.up();
-            lock_input = true;
+            if (snake.is_up()) {
+                snake_speed = 5;
+            } else {
+                snake.up();
+                lock_input = true;
+            }
         }
 
         if (just_pressed & w4.BUTTON_DOWN != 0) {
-            snake.down();
-            lock_input = true;
+            if (snake.is_down()) {
+                snake_speed = 5;
+            } else {
+                snake.down();
+                lock_input = true;
+            }
         }
 
         if (just_pressed & w4.BUTTON_LEFT != 0) {
-            snake.left();
-            lock_input = true;
+            if (snake.is_left()) {
+                snake_speed = 5;
+            } else {
+                snake.left();
+                lock_input = true;
+            }
         }
 
         if (just_pressed & w4.BUTTON_RIGHT != 0) {
-            snake.right();
-            lock_input = true;
+            if (snake.is_right()) {
+                snake_speed = 5;
+            } else {
+                snake.right();
+                lock_input = true;
+            }
         }
     }
 
@@ -65,6 +82,7 @@ fn proceed_input() void {
         frame_count = 0;
         snake = Snake.init();
         life.lifes_cnt = 3;
+        snake_speed = 15;
     }
 
     prev_state = gamepad;
@@ -80,7 +98,10 @@ export fn update() void {
         w4.text("Press X to restart", 1 * 8, 10 * 8);
     }
 
-    if (frame_count % 15 == 0 and game_over == false) {
+    // Return back to normal speed in 3 sec
+    if (frame_count % 180 == 0) snake_speed = 15;
+
+    if (frame_count % snake_speed == 0 and game_over == false) {
         snake.update();
         lock_input = false;
 
